@@ -4,7 +4,7 @@ import os
 app = Flask(__name__)
 
 # Get server ID from environment variable
-server_id = os.environ.get('SERVER_ID', 'Unknown')
+server_id = os.environ.get('SERVER_ID')
 
 @app.route('/home', methods=['GET'])
 def home():
