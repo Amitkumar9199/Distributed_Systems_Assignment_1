@@ -4,7 +4,7 @@ import os
 import random
 import requests
 app = Flask(__name__)
-#TODO: add consistent hash map
+#TODO: add consistent hash map instance
 client = docker.from_env()
 network = "n1"
 image = "server"
@@ -58,7 +58,7 @@ def add_servers():
             # store id->hostname and hostname->id mapping
             server_id_to_host[server_id] = server_name
             server_host_to_id[server_name] = server_id
-            #TODO: add virtual server replicas to consistent hash table
+            #TODO: add the virtual server replicas of server to consistent hash table 
             i = i + 1
         containers = client.containers.list(filters={'network':network})
          # Get server containers hostnames
@@ -109,7 +109,7 @@ def remove_servers():
             return jsonify(response_data), 400
     # Delete the hash map entry of server id and host names and stop and remove the correpsonding server conatiner
     for server in servers_rm:
-        #TODO: remove server entry from consistent hash map
+        #TODO: remove virtual server entries of server from consistent hash map
         server_id = server_host_to_id[server]
         server_host_to_id.pop(server)
         server_id_to_host.pop(server_id)
@@ -149,7 +149,7 @@ def redirect_request(path='home'):
         }
         return jsonify(response_data), 400
     request_id = random.randint(0, 1000000)
-    #TODO: Replace the hardcoded server with server selection using consistent hash
+    #TODO: Using the request id select the server and replace server_id and server name with corresponding values
     try:
         server_id = list(server_id_to_host.keys())[0]
         server = list(server_host_to_id.keys())[0]
