@@ -1,7 +1,8 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, redirect
 import docker
 import os
 import random
+import requests
 app = Flask(__name__)
 #TODO: add consistent hash map
 client = docker.from_env()
@@ -45,7 +46,7 @@ def add_servers():
             if i < len(hostnames):
                 server_name = hostnames[i]
             else:
-                server_name = "S" + str(server_id)
+                server_name = "Server#" + str(server_id)
             # spawn a server container
             try:
                 client.containers.run(image=image, name=server_name, network=network, detach=True, environment={'SERVER_ID': server_id})
@@ -156,5 +157,34 @@ def home():
     }
     return jsonify(response_data), 200
 
+@app.route('/<path:path>', methods=['GET'])
+def redirect_request(path='home'):
+    if not (path == 'home' or path == 'heartbeat'):
+        response_data = {
+            "message" : "<Error> {path} endpoint does not exist in server replicas",
+            "status" : "failure"
+        }
+        return jsonify(response_data), 400
+    if len(server_host_to_id) == 0:
+        response_data = {
+            "message" : "<Error> No server replica working",
+            "status" : "failure"
+        }
+        return jsonify(response_data), 400
+    request_id = random.randint(0, 1000000)
+    #TODO: Replace the hardcoded server with server selection using consistent hash
+    try:
+        server_id = list(server_id_to_host.keys())[0]
+        server = list(server_host_to_id.keys())[0]
+        container = client.containers.get(server)
+        ip_addr = container.attrs["NetworkSettings"]["Networks"][network]["IPAddress"]
+        url_redirect = f'http://{ip_addr}:5000/{path}'
+        return requests.get(url_redirect).json(), 200
+    except Exception as e:
+            print(e)
+            response = jsonify({'message': '<Error> Failed to redirect request to server', 
+                        'status': 'failure'})
+            response.status_code = 400
+            return response
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
