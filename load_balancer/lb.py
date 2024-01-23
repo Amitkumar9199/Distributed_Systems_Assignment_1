@@ -52,10 +52,9 @@ def add_servers():
                 client.containers.run(image=image, name=server_name, network=network, detach=True, environment={'SERVER_ID': server_id})
             except Exception as e:
                 print(e)
-                response = jsonify({'message': '<Error> Failed to spawn new docker container', 
-                        'status': 'failure'})
-                response.status_code = 400
-                return response
+                response = {'message': '<Error> Failed to spawn new docker container', 
+                        'status': 'failure'}
+                return jsonify(response), 400
             # store id->hostname and hostname->id mapping
             server_id_to_host[server_id] = server_name
             server_host_to_id[server_name] = server_id
@@ -120,10 +119,9 @@ def remove_servers():
             container.remove()
         except Exception as e:
             print(e)
-            response = jsonify({'message': '<Error> Failed to remove docker container', 
-                        'status': 'failure'})
-            response.status_code = 400
-            return response
+            response_data = {'message': '<Error> Failed to remove docker container', 
+                        'status': 'failure'}
+            return jsonify(response_data), 400
     # Get server containers hostnames
     containers = client.containers.list(filters={'network':network})
     response_data = {
@@ -135,27 +133,6 @@ def remove_servers():
             "status": "successful"
         }
     return jsonify(response), 200
-
-
-@app.route('/home', methods=['GET'])
-def home():
-    # Choose a random server and get its ID
-    servers = [container.name for container in client.containers.list(filters={'network': network}) if container.name != "lb"]
-    if not servers:
-        response_data = {
-            "message": "<Error> No servers available",
-            "status": "failure"
-        }
-        return jsonify(response_data), 500
-
-    selected_server = random.choice(servers)
-    server_id = server_host_to_id.get(selected_server, "<Unknown ID>")
-
-    response_data = {
-        "message": f"Hello from Server: {server_id}",
-        "status": "successful"
-    }
-    return jsonify(response_data), 200
 
 @app.route('/<path:path>', methods=['GET'])
 def redirect_request(path='home'):
@@ -182,9 +159,8 @@ def redirect_request(path='home'):
         return requests.get(url_redirect).json(), 200
     except Exception as e:
             print(e)
-            response = jsonify({'message': '<Error> Failed to redirect request to server', 
-                        'status': 'failure'})
-            response.status_code = 400
-            return response
+            response_data = {'message': '<Error> Failed to redirect request', 
+                        'status': 'failure'}
+            return jsonify(response_data), 400
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
