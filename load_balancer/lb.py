@@ -134,5 +134,27 @@ def remove_servers():
             "status": "successful"
         }
     return jsonify(response), 200
+
+
+@app.route('/home', methods=['GET'])
+def home():
+    # Choose a random server and get its ID
+    servers = [container.name for container in client.containers.list(filters={'network': network}) if container.name != "lb"]
+    if not servers:
+        response_data = {
+            "message": "<Error> No servers available",
+            "status": "failure"
+        }
+        return jsonify(response_data), 500
+
+    selected_server = random.choice(servers)
+    server_id = server_host_to_id.get(selected_server, "<Unknown ID>")
+
+    response_data = {
+        "message": f"Hello from Server: {server_id}",
+        "status": "successful"
+    }
+    return jsonify(response_data), 200
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
