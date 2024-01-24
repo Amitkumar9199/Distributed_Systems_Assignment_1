@@ -165,6 +165,7 @@ def redirect_request(path='home'):
             "status" : "failure"
         }
         return jsonify(response_data), 400
+    
     # try:
     #     data = request.get_json()
     #     if not data  or 'request_id' not in data.keys():
@@ -173,6 +174,7 @@ def redirect_request(path='home'):
     #         request_id = data['request_id']
     # except KeyError as err:
     request_id = random.randint(100000, 1000000)
+
     # Using the request id select the server and replace server_id and server name with corresponding values
     try:
         #server_id = list(server_id_to_host.keys())[0]
@@ -192,3 +194,6 @@ def redirect_request(path='home'):
             return jsonify(response_data), 400
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
+    
+    # run a new process for heartbeat.py file
+    os.system('python3 heartbeat.py')
