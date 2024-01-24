@@ -3,8 +3,18 @@ import docker
 import os
 import random
 import requests
+
+import sys
+sys.path.append('../Consistent_Hashing')
+from main import ConsistentHashing
+
+
+
 app = Flask(__name__)
-#TODO: add consistent hash map instance
+
+# add consistent hash map instance
+ConsistentHashing = ConsistentHashing(3, 512, 9)
+
 client = docker.from_env()
 network = "n1"
 image = "server"
@@ -41,9 +51,11 @@ def add_servers():
         while(i < n):
             # Get server IDs for server
             server_id = random.randint(0, 1000000)
+            if server_id in server_id_to_host.keys():
+                continue
             server_name = ''
             # If n > len(hostnames) generate hostnames based on server IDs
-            if i < len(hostnames):
+            if i < len(hostnames) and hostnames[i] not in server_host_to_id.keys():
                 server_name = hostnames[i]
             else:
                 server_name = "Server#" + str(server_id)
@@ -58,7 +70,10 @@ def add_servers():
             # store id->hostname and hostname->id mapping
             server_id_to_host[server_id] = server_name
             server_host_to_id[server_name] = server_id
-            #TODO: add the virtual server replicas of server to consistent hash table 
+
+            # add the virtual server replicas of server to consistent hash table 
+            ConsistentHashing.add_server(server_id)
+
             i = i + 1
         containers = client.containers.list(filters={'network':network})
          # Get server containers hostnames
@@ -109,7 +124,9 @@ def remove_servers():
             return jsonify(response_data), 400
     # Delete the hash map entry of server id and host names and stop and remove the correpsonding server conatiner
     for server in servers_rm:
-        #TODO: remove virtual server entries of server from consistent hash map
+        # remove virtual server entries of server from consistent hash map
+        ConsistentHashing.remove_server(server_host_to_id[server])
+
         server_id = server_host_to_id[server]
         server_host_to_id.pop(server)
         server_id_to_host.pop(server_id)
@@ -148,11 +165,17 @@ def redirect_request(path='home'):
             "status" : "failure"
         }
         return jsonify(response_data), 400
-    request_id = random.randint(0, 1000000)
-    #TODO: Using the request id select the server and replace server_id and server name with corresponding values
+    
+    data = request.get_json()
+    if data is None or 'request_id' not in data.keys():
+        request_id = random.randint(0, 1000000)
+    else:
+        request_id = data['request_id']
+    
+    # Using the request id select the server and replace server_id and server name with corresponding values
     try:
-        server_id = list(server_id_to_host.keys())[0]
-        server = list(server_host_to_id.keys())[0]
+        server_id = ConsistentHashing.get_server_for_request(request_id)
+        server = server_id_to_host[server_id]
         container = client.containers.get(server)
         ip_addr = container.attrs["NetworkSettings"]["Networks"][network]["IPAddress"]
         url_redirect = f'http://{ip_addr}:5000/{path}'
