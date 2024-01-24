@@ -154,6 +154,7 @@ def remove_servers():
 
 @app.route('/<path:path>', methods=['GET'])
 def redirect_request(path='home'):
+    global heartbeat_ptr
     if not (path == 'home' or path == 'heartbeat'):
         response_data = {
             "message" : "<Error> {path} endpoint does not exist in server replicas",
@@ -179,7 +180,7 @@ def redirect_request(path='home'):
             return requests.get(url_redirect).json(), 200
         except Exception as e:
             # restart server container
-            client.containers.run(image=image, name=server, network=network, detach=True, environment={'SERVER_ID': server_id})
+            # client.containers.run(image=image, name=server, network=network, detach=True, environment={'SERVER_ID': server_id})
             print('Restarted server container ' + server + ' with id ' + str(server_id))
             response_data = {'message': '<Error> Failed to redirect request', 
                         'status': 'failure'}
@@ -212,4 +213,4 @@ if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
 
     # run a new process for heartbeat.py file
-    os.system('python3 heartbeat.py')
+    # os.system('python3 heartbeat.py')
