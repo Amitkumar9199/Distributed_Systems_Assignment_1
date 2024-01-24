@@ -13,6 +13,7 @@ from main import ConsistentHashing
 app = Flask(__name__)
 
 # add consistent hash map instance
+heartbeat_ptr=0
 ConsistentHashing = ConsistentHashing(3, 512, 9)
 
 client = docker.from_env()
@@ -153,7 +154,7 @@ def remove_servers():
 
 @app.route('/<path:path>', methods=['GET'])
 def redirect_request(path='home'):
-    if not (path == 'home'):
+    if not (path == 'home' or path == 'heartbeat'):
         response_data = {
             "message" : "<Error> {path} endpoint does not exist in server replicas",
             "status" : "failure"
@@ -166,6 +167,25 @@ def redirect_request(path='home'):
         }
         return jsonify(response_data), 400
     
+    if path == 'heartbeat':
+        num_servers = len(server_host_to_id)
+        heartbeat_ptr = (heartbeat_ptr + 1) % num_servers
+        server = list(server_host_to_id.keys())[heartbeat_ptr]
+        server_id = server_host_to_id[server]
+        try:
+            container = client.containers.get(server)
+            ip_addr = container.attrs["NetworkSettings"]["Networks"][network]["IPAddress"]
+            url_redirect = f'http://{ip_addr}:5000/{path}'
+            return 
+        except Exception as e:
+            # restart server container
+            client.containers.run(image=image, name=server, network=network, detach=True, environment={'SERVER_ID': server_id})
+            print('Restarted server container ' + server + ' with id ' + str(server_id))
+            response_data = {'message': '<Error> Failed to redirect request', 
+                        'status': 'failure'}
+            return jsonify(response_data), 400
+
+
     # try:
     #     data = request.get_json()
     #     if not data  or 'request_id' not in data.keys():
@@ -177,12 +197,8 @@ def redirect_request(path='home'):
 
     # Using the request id select the server and replace server_id and server name with corresponding values
     try:
-        #server_id = list(server_id_to_host.keys())[0]
-        print(request_id)
         server_id = ConsistentHashing.get_server_for_request(request_id)
-        print(server_id)
         server = server_id_to_host[server_id]
-        print(server)
         container = client.containers.get(server)
         ip_addr = container.attrs["NetworkSettings"]["Networks"][network]["IPAddress"]
         url_redirect = f'http://{ip_addr}:5000/{path}'
@@ -194,6 +210,6 @@ def redirect_request(path='home'):
             return jsonify(response_data), 400
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
-    
+
     # run a new process for heartbeat.py file
     os.system('python3 heartbeat.py')

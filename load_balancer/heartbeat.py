@@ -13,6 +13,7 @@ async def main():
         url = 'http://localhost:5000/heartbeat'
         async with aiohttp.ClientSession() as session:
             response = await fetch(session, url)
+            
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
