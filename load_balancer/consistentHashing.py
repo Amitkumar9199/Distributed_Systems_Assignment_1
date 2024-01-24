@@ -69,29 +69,29 @@ class ConsistentHashing:
         # If no slot is found greater than or equal to the request's slot, return the first slot in the sorted list
         return self.servers[sorted_slots[0]]
 
-# Example usage:
-num_servers = 3
-total_slots = 512
-num_virtual_servers = 9 # int(math.log2(total_slots))
+# # Example usage:
+# num_servers = 3
+# total_slots = 512
+# num_virtual_servers = 9 # int(math.log2(total_slots))
 
-consistent_hashing = ConsistentHashing(num_servers, total_slots, num_virtual_servers)
+# consistent_hashing = ConsistentHashing(num_servers, total_slots, num_virtual_servers)
 
-# Add servers to the consistent hash map
-for i in range(num_servers):
-    consistent_hashing.add_server(i)
-consistent_hashing.print_servers()
-# Get server for a specific request
-for request_id in range(10):
-    request_hash = consistent_hashing.hash_function_request(request_id)
-    print(request_hash)
-    selected_server = consistent_hashing.get_server_for_request(request_id)
-consistent_hashing.remove_server(0)
-consistent_hashing.remove_server(1)
-consistent_hashing.remove_server(2)
-consistent_hashing.print_servers()
+# # Add servers to the consistent hash map
+# for i in range(num_servers):
+#     consistent_hashing.add_server(i)
+# consistent_hashing.print_servers()
+# # Get server for a specific request
+# for request_id in range(10):
+#     request_hash = consistent_hashing.hash_function_request(request_id)
+#     print(request_hash)
+#     selected_server = consistent_hashing.get_server_for_request(request_id)
+# consistent_hashing.remove_server(0)
+# consistent_hashing.remove_server(1)
+# consistent_hashing.remove_server(2)
+# consistent_hashing.print_servers()
 
-for request_id in range(10):
-    request_hash = consistent_hashing.hash_function_request(request_id)
-    print(request_hash)
-    selected_server = consistent_hashing.get_server_for_request(request_id)
-    print(f"Selected Server: {selected_server}")
+# for request_id in range(10):
+#     request_hash = consistent_hashing.hash_function_request(request_id)
+#     print(request_hash)
+#     selected_server = consistent_hashing.get_server_for_request(request_id)
+#     print(f"Selected Server: {selected_server}")

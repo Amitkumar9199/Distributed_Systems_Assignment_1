@@ -3,10 +3,8 @@ import docker
 import os
 import random
 import requests
-
-import sys
-sys.path.append('../Consistent_Hashing')
-from main import ConsistentHashing
+from subprocess import Popen
+from consistentHashing import ConsistentHashing
 
 
 
@@ -119,7 +117,7 @@ def remove_servers():
     for server in servers_rm:
         if server not in container_names:
             response_data = {
-        "message" : "<Error> Server not found",
+        "message" : "<Error> At least one of the servers was not found",
         "status" : "failure"
     }
             return jsonify(response_data), 400
@@ -210,8 +208,11 @@ def redirect_request(path='home'):
                         'status': 'failure'}
             return jsonify(response_data), 400
 if __name__ == "__main__":
-    # run a new process for heartbeat.py file
-    os.system('python3 heartbeat.py')
+  # run a new process for heartbeat.py file
+    absolute_path = os.path.dirname(__file__)
+    relative_path = "./heartbeat.py"
+    full_path = os.path.join(absolute_path, relative_path)
+    process = Popen(['python3', full_path], close_fds=True)
     app.run(host='0.0.0.0', port=5000)
 
     
