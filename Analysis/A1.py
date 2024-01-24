@@ -10,16 +10,17 @@ async def fetch(session, url):
         return await response.text()
 
 def extract_server_id(response):
-    # Find the index of the colon in the response
-    colon_index = response.find(':')
 
-    # Extract the server_id by slicing the string after the colon
-    server_id = response[colon_index + 1:].strip()
-
+    # Extract server ID from the message
+    message = response["message"]
+    server_id = message.split(":")[1].strip()
+    
     return server_id
     
 async def main():
-    url = 'https://www.google.com'
+
+    # launch a GET request to the url
+    url = 'http://localhost:5000/home'
 
     # store the count of serverid responses in a dictionary
 
@@ -33,8 +34,13 @@ async def main():
             freq[serverid] = freq.get(serverid, 0) + 1
 
     # draw a bar graph of the frequency of each serverid
+    # and label the x-axis with the serverid and the y-axis with the frequency
     plt.bar(freq.keys(), freq.values())
-
+    plt.xlabel('Server ID')
+    plt.ylabel('Frequency')
+    
+    # print the graph
+    plt.show()
 
 
 if __name__ == '__main__':
