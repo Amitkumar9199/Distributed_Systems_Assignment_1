@@ -13,8 +13,6 @@ class ConsistentHashing:
         for i in range(self.total_slots):
             if i in self.servers:
                 print(f"Index: {i} Server: {self.servers[i]}")
-            else:
-                print(f"Index: {i} Server: None")
 
     def hash_function_request(self, request_id):
         return (request_id ** 2 + 2 * request_id + 17) % self.total_slots
@@ -28,7 +26,7 @@ class ConsistentHashing:
             slot = self.hash_function_server(server_id, j)
             
             # Apply linear probing if the slot is already occupied
-            while slot in self.servers:
+            while slot in self.servers.keys():
                 slot = (slot + 1) % self.total_slots  # Linear probing
                 # Alternatively, you can use quadratic probing
                 # slot = (slot + (j**2)) % self.total_slots  # Quadratic probing
@@ -47,9 +45,10 @@ class ConsistentHashing:
             slot = self.hash_function_server(server_id, j)
             
             # Remove the server from the hash map
-            while slot in self.servers :
-                if self.servers[slot] == server_id:
+            while True :
+                if slot in self.servers.keys() and self.servers[slot] == server_id:
                     del self.servers[slot]
+                    break
                 slot = (slot + 1) % self.total_slots  # Move to the next slot
 
     def get_server_for_request(self, request_id):
@@ -80,9 +79,11 @@ consistent_hashing = ConsistentHashing(num_servers, total_slots, num_virtual_ser
 # Add servers to the consistent hash map
 for i in range(num_servers):
     consistent_hashing.add_server(i)
-
+consistent_hashing.print_servers()
 # Get server for a specific request
-request_id = 132574
-selected_server = consistent_hashing.get_server_for_request(request_id)
+for request_id in range(10):
+    request_hash = consistent_hashing.hash_function_request(request_id)
+    print(request_hash)
+    selected_server = consistent_hashing.get_server_for_request(request_id)
 
-print(f"Selected Server: {selected_server}")
+    print(f"Selected Server: {selected_server}")
