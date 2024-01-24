@@ -15,7 +15,10 @@ def extract_server_id(response):
 
     # Extract server ID from the message
     message = response["message"]
-    server_id = message.split(":")[1].strip()
+    server_id = message.split(":")
+    if len(server_id) != 2:
+        return -1
+    server_id = server_id[1].strip()
     
     return server_id
     
@@ -45,8 +48,9 @@ async def main():
             for j in range(10000):
                 async with aiohttp.ClientSession() as session:
                     response = await fetch(session, url + 'home')
-                    
                     serverid = extract_server_id(response)
+                    if serverid == -1:
+                        continue
                     freq[serverid] = freq.get(serverid, 0) + 1
             
             server_count = len(freq.values())

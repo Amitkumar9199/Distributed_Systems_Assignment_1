@@ -14,6 +14,9 @@ class ConsistentHashing:
             if i in self.servers:
                 print(f"Index: {i} Server: {self.servers[i]}")
 
+# i**2 + 6
+# (i**2 + j
+
     def hash_function_request(self, request_id):
         return (request_id ** 2 + 2 * request_id + 17) % self.total_slots
 
