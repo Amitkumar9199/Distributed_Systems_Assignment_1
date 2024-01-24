@@ -12,12 +12,11 @@ async def fetch(session, url):
         return await response.text()
 
 def extract_server_id(response):
-    # Find the index of the colon in the response
-    colon_index = response.find(':')
 
-    # Extract the server_id by slicing the string after the colon
-    server_id = response[colon_index + 1:].strip()
-
+    # Extract server ID from the message
+    message = response["message"]
+    server_id = message.split(":")[1].strip()
+    
     return server_id
     
 async def main():
