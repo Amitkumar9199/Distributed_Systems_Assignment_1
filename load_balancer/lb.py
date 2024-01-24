@@ -176,7 +176,7 @@ def redirect_request(path='home'):
             container = client.containers.get(server)
             ip_addr = container.attrs["NetworkSettings"]["Networks"][network]["IPAddress"]
             url_redirect = f'http://{ip_addr}:5000/{path}'
-            return 
+            return requests.get(url_redirect).json(), 200
         except Exception as e:
             # restart server container
             client.containers.run(image=image, name=server, network=network, detach=True, environment={'SERVER_ID': server_id})
