@@ -54,6 +54,22 @@ async def main():
 
             mean = sum(freq.values()) / server_count
 
+            plt.plot(freq.keys(), freq.values())
+            plt.xlabel('Server ID')
+            plt.ylabel('Frequency')
+
+            # draw a horizontal line at the mean
+            plt.axhline(y=mean, color='r', linestyle='-')
+            plt.savefig('a2_freq' + str(i) + '.png')
+            plt.clf()
+
+            # plot the graph of differences from the mean
+            plt.plot(freq.keys(), [(x - mean) for x in freq.values()])
+            plt.xlabel('Server ID')
+            plt.ylabel('Difference from Mean')
+            plt.savefig('a2_diff' + str(i) + '.png')
+            plt.clf()
+
             variance = sum([((x - mean) ** 2) for x in freq.values()]) / server_count
 
             std_dev = variance ** 0.5
@@ -64,12 +80,20 @@ async def main():
 
             response = requests.post(url + 'add', data=json.dumps(data), headers=headers)
 
-        plt.bar(main_data.keys(), main_data.values())
+        # plot the graph using line plot
+        
+        plt.plot(main_data.keys(), main_data.values())
         plt.xlabel('Number of Servers')
         plt.ylabel('Standard Deviation')
+        plt.savefig('a2_sd.png')
+        plt.clf()
 
-        # print the graph
-        plt.show()
+        # plt.bar(main_data.keys(), main_data.values())
+        # plt.xlabel('Number of Servers')
+        # plt.ylabel('Standard Deviation')
+
+
+
 
     else:
         print("Error: " + str(response.status_code))
