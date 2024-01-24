@@ -23,7 +23,7 @@ def extract_server_id(response):
 async def main():
 
     # launch a GET request to the url
-    url = 'http://localhost:5000/home'
+    url = 'http://localhost:5000/'
 
     # run curl -X DELETE  -H "Content-Type: application/json" -d '{"n": 1, "hostnames": ["s1"]}' 
     # http://localhost:5000/hosts
@@ -33,7 +33,7 @@ async def main():
 
     # we deleted one instance of a server (which was 3 initially)
 
-    response = requests.delete(url, data=json.dumps(data), headers=headers)
+    response = requests.delete(url + 'rm', data=json.dumps(data), headers=headers)
 
     if response.status_code == 200:
 
@@ -45,7 +45,7 @@ async def main():
 
             for j in range(10000):
                 async with aiohttp.ClientSession() as session:
-                    response = await fetch(session, url)
+                    response = await fetch(session, url + 'home')
                     
                     serverid = extract_server_id(response)
                     freq[serverid] = freq.get(serverid, 0) + 1
@@ -62,7 +62,7 @@ async def main():
 
             data = {"n": 1, "hostnames": ["s" + str(i + 1)]}
 
-            response = requests.post(url, data=json.dumps(data), headers=headers)
+            response = requests.post(url + 'add', data=json.dumps(data), headers=headers)
 
         plt.bar(main_data.keys(), main_data.values())
         plt.xlabel('Number of Servers')
