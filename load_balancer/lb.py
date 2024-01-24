@@ -58,7 +58,7 @@ def add_servers():
             if i < len(hostnames) and hostnames[i] not in server_host_to_id.keys():
                 server_name = hostnames[i]
             else:
-                server_name = "Server#" + str(server_id)
+                server_name = "Server" + str(server_id)
             # spawn a server container
             try:
                 client.containers.run(image=image, name=server_name, network=network, detach=True, environment={'SERVER_ID': server_id})
@@ -153,7 +153,7 @@ def remove_servers():
 
 @app.route('/<path:path>', methods=['GET'])
 def redirect_request(path='home'):
-    if not (path == 'home' or path == 'heartbeat'):
+    if not (path == 'home'):
         response_data = {
             "message" : "<Error> {path} endpoint does not exist in server replicas",
             "status" : "failure"
@@ -165,17 +165,22 @@ def redirect_request(path='home'):
             "status" : "failure"
         }
         return jsonify(response_data), 400
-    
-    data = request.get_json()
-    if data is None or 'request_id' not in data.keys():
-        request_id = random.randint(0, 1000000)
-    else:
-        request_id = data['request_id']
-    
+    # try:
+    #     data = request.get_json()
+    #     if not data  or 'request_id' not in data.keys():
+    #         request_id = random.randint(100000, 1000000)
+    #     else:
+    #         request_id = data['request_id']
+    # except KeyError as err:
+    request_id = random.randint(100000, 1000000)
     # Using the request id select the server and replace server_id and server name with corresponding values
     try:
+        #server_id = list(server_id_to_host.keys())[0]
+        print(request_id)
         server_id = ConsistentHashing.get_server_for_request(request_id)
+        print(server_id)
         server = server_id_to_host[server_id]
+        print(server)
         container = client.containers.get(server)
         ip_addr = container.attrs["NetworkSettings"]["Networks"][network]["IPAddress"]
         url_redirect = f'http://{ip_addr}:5000/{path}'
