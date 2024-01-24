@@ -1,37 +1,16 @@
-# Foobar
+# A-1
 
-Foobar is a Python library for dealing with word pluralization.
+It is clear from the graph that the load is unevenly distributed amoung the servers.
+Which has some known pitfalls.
+1. Uneven utilization of resources.
+2. Uneven load distribution can result in higher latency for users accessing the overloaded servers, leading to slower response times.
+3. Overloaded servers may become prone to failures, leading to potential downtime or service disruptions.
+4. Uneven load distribution can make it harder to accurately plan for and allocate resources.
 
-## Installation
+<!-- TODO: Explaination of the uneven distribution -->
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
+## A-2
 
-```bash
-pip install foobar
-```
+By looking on the data of standard deviation vs server counts we can say that Linear probing technique is effective on large number of server instances, while on small server instances Quadratic probing is helpful. However in both of these cases the distribution is fairly uneven which may result in scalabily issue and Capacity planning becomes more challenging when the load balancer is not distributing traffic evenly across servers.
 
-## Usage
-
-```python
-import foobar
-
-# returns 'words'
-foobar.pluralize('word')
-
-# returns 'geese'
-foobar.pluralize('goose')
-
-# returns 'phenomenon'
-foobar.singularize('phenomena')
-```
-
-## Contributing
-
-Pull requests are welcome. For major changes, please open an issue first
-to discuss what you would like to change.
-
-Please make sure to update tests as appropriate.
-
-## License
-
-[MIT](https://choosealicense.com/licenses/mit/)
+<!-- TODO: Explaination of the uneven distribution -->
