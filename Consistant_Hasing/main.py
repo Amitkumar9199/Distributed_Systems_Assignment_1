@@ -85,5 +85,13 @@ for request_id in range(10):
     request_hash = consistent_hashing.hash_function_request(request_id)
     print(request_hash)
     selected_server = consistent_hashing.get_server_for_request(request_id)
+consistent_hashing.remove_server(0)
+consistent_hashing.remove_server(1)
+consistent_hashing.remove_server(2)
+consistent_hashing.print_servers()
 
+for request_id in range(10):
+    request_hash = consistent_hashing.hash_function_request(request_id)
+    print(request_hash)
+    selected_server = consistent_hashing.get_server_for_request(request_id)
     print(f"Selected Server: {selected_server}")
