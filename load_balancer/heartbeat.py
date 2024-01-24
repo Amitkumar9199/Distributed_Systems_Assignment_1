@@ -9,7 +9,7 @@ async def fetch(session, url):
     
 async def main():
     while True:
-        sleep(5)
+        sleep(2)  #TODO: change to 1 second or 0.5 second
         url = 'http://localhost:5000/heartbeat'
         async with aiohttp.ClientSession() as session:
             response = await fetch(session, url)
