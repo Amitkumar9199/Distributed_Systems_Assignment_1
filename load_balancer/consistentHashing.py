@@ -24,12 +24,13 @@ class ConsistentHashing:
         for j in range(self.num_virtual_servers):
             virtual_server_id = f"{server_id}-{j}"
             slot = self.hash_function_server(server_id, j)
-            
+            #k = 4
             # Apply linear probing if the slot is already occupied
             while slot in self.servers.keys():
                 slot = (slot + 1) % self.total_slots  # Linear probing
                 # Alternatively, you can use quadratic probing
-                # slot = (slot + (j**2)) % self.total_slots  # Quadratic probing
+                # slot = (slot + (k**2)) % self.total_slots  # Quadratic probing
+                # k = k + 1
 
             self.servers[slot] = server_id
 

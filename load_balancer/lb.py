@@ -176,14 +176,20 @@ def redirect_request(path='home'):
             ip_addr = container.attrs["NetworkSettings"]["Networks"][network]["IPAddress"]
             url_redirect = f'http://{ip_addr}:5000/{path}'
             return requests.get(url_redirect).json(), 200
-        except Exception as e:
+        except docker.errors.NotFound:
             # restart server container
             client.containers.run(image=image, name=server, network=network, detach=True, environment={'SERVER_ID': server_id})
             print('Restarted server container ' + server + ' with id ' + str(server_id))
             response_data = {'message': '<Error> Failed to redirect request', 
                         'status': 'failure'}
             return jsonify(response_data), 400
-
+        except Exception as e:
+            container = client.containers.get(server)
+            container.restart()
+            print('Restarted server container ' + server + ' with id ' + str(server_id))
+            response_data = {'message': '<Error> Failed to redirect request', 
+                        'status': 'failure'}
+            return jsonify(response_data), 400
 
     # try:
     #     data = request.get_json()
