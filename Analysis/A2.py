@@ -9,7 +9,7 @@ import json
 # write a function to launch a get request to the url and return the response
 async def fetch(session, url):
     async with session.get(url) as response:
-        return await response.text()
+        return await response.json()
 
 def extract_server_id(response):
 

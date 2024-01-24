@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 # write a function to launch a get request to the url and return the response
 async def fetch(session, url):
     async with session.get(url) as response:
-        return await response.text()
+        return await response.json()
 
 def extract_server_id(response):
 
@@ -36,11 +36,16 @@ async def main():
     # draw a bar graph of the frequency of each serverid
     # and label the x-axis with the serverid and the y-axis with the frequency
     plt.bar(freq.keys(), freq.values())
+    # Add the values on top of the bars
+    for server_id, frequency in freq.items():
+        plt.text(server_id, frequency + 0.1, str(frequency), ha='center', va='bottom')
+
     plt.xlabel('Server ID')
     plt.ylabel('Frequency')
     
     # print the graph
-    plt.show()
+    # plt.show()
+    plt.savefig('A1.png')
 
 
 if __name__ == '__main__':
