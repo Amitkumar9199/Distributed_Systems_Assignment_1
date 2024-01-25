@@ -1,3 +1,21 @@
+## Instructions for running the load balancer
+
+    make build 
+    make run_lb
+
+Open another terminal and run the following command to initiate 3 servers
+    make run_servers
+
+For running the Analysis code
+    python3 Analysis/A1.py
+    python3 Analysis/A2.py
+
+For stopping the containers
+    make stop
+
+For removing the containers
+    make rm
+
 # A-1
 
 The graph indicates uneven load distribution among servers, leading to several issues:
@@ -26,6 +44,17 @@ The data analysis of standard deviation versus server counts reveals that linear
 ## A-3
 
 We're implementing a new process that periodically sends a heartbeat every 2 seconds to enable the load balancer to verify server statuses. We maintain a circular array of servers and send heartbeats in sequence. If the status code is 200, indicating the server is online, no action is taken. However, if the status code is different, we check whether the server container has been stopped or removed. If stopped, we resume the server container; otherwise, we initiate a new server container. This approach ensures a fixed number of servers. In the worst-case scenario, the time required to bring a server back to life is estimated at 2*n seconds, assuming there are currently n live servers.
+
+After starting the load balancer and the servers to simulate the server failure do the following:
+    docker ps
+
+Copy the id of any server container then 
+    docker stop <container_id>
+
+For removing the stopped server container 
+    docker rm <container_id>
+
+After performing the above steps if you run `docker ps` you can see that the server container has started again.
 
 ## A-4
 
