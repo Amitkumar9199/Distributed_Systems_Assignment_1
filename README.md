@@ -29,8 +29,8 @@ We're implementing a new process that periodically sends a heartbeat every 2 sec
 
 ## A-4
 
-The chosen hash functions for the demonstration, 
-H(i)      = i * i + 6
+The chosen hash functions for the demonstration, \
+H(i)      = i * i + 6 \
 phi(i, j) = i * i + j 
 
 along with the application of the linear probing technique, exhibited poorer performance compared to the previous ones. Server 1 experienced a higher load due to the inability of these hash functions to effectively distribute the loads across the servers.
