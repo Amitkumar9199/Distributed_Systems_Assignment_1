@@ -14,15 +14,17 @@ class ConsistentHashing:
             if i in self.servers:
                 print(f"Index: {i} Server: {self.servers[i]}")
 
-# i**2 + 6
-# (i**2 + j
+# (i**2 + 6)
+# (i**2 + j)
 
     def hash_function_request(self, request_id):
         return (request_id ** 2 + 2 * request_id + 17) % self.total_slots
+        #return (request_id ** 2 + 6) % self.total_slots
 
     def hash_function_server(self, server_id, virtual_server_id):
         return (server_id ** 2 + virtual_server_id ** 2 + 2 * virtual_server_id + 25) % self.total_slots
-
+        #return (server_id ** 2 + virtual_server_id) % self.total_slots
+    
     def add_server(self, server_id):
         for j in range(self.num_virtual_servers):
             virtual_server_id = f"{server_id}-{j}"
