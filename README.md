@@ -1,24 +1,40 @@
 # A-1
 
-It is clear from the graph that the load is unevenly distributed amoung the servers.
-Which has some known pitfalls.
-1. Uneven utilization of resources.
-2. Uneven load distribution can result in higher latency for users accessing the overloaded servers, leading to slower response times.
-3. Overloaded servers may become prone to failures, leading to potential downtime or service disruptions.
-4. Uneven load distribution can make it harder to accurately plan for and allocate resources.
+The graph indicates uneven load distribution among servers, leading to several issues:
+
+    1. Uneven Resource Utilization:
+    Resources are unevenly distributed, causing some servers to be underutilized while others are overloaded.
+
+    2. Latency Concerns:
+    Overloaded servers result in higher latency for users, leading to slower response times during access.
+
+    3. Risk of Failures:
+    Overloaded servers are more prone to failures, potentially causing downtime or disruptions in service.
+
+    4. Resource Planning Challenges:
+    Uneven load distribution complicates resource planning, making it difficult to allocate resources effectively.
 
 <!-- TODO: Explaination of the uneven distribution -->
 
 ## A-2
 
-By looking on the data of standard deviation vs server counts we can say that Linear probing technique is effective on large number of server instances, while on small server instances Quadratic probing is helpful. However in both of these cases the distribution is fairly uneven which may result in scalabily issue and Capacity planning becomes more challenging when the load balancer is not distributing traffic evenly across servers.
+The data analysis of standard deviation versus server counts reveals that linear probing is effective for a large number of server instances, whereas quadratic probing is more helpful for smaller server instances. However, both techniques exhibit uneven distribution, potentially leading to scalability issues. This uneven distribution poses challenges for capacity planning as the load balancer struggles to evenly distribute traffic among servers. Consequently, ensuring efficient resource utilization and maintaining balance becomes more complex, emphasizing the need for careful consideration of the chosen probing technique based on the scale of the server infrastructure.
+
 
 <!-- TODO: Explaination of the uneven distribution -->
 
 ## A-3
 
-We are creating a new process which regularly sends 'heartbeat in interval of 2 seconds. It helps loadbalancer to check whether servers are alive or not. We are maintaining a circular array of servers and sending heatbeat in a circular way. If status code is 200 then it isonline and we do nohing. Otherwise we cheking if server container has stopped or is removed  . if it is stppoed then we will resume then server container else we will fire up a new server container.
-This way we are keeping fixed number if servers. 
-In worst case how much time will be required to again make server alive: 
-    Assuming there are currently  n live servers , then in worst case it might take 2*n seconds 
+We're implementing a new process that periodically sends a heartbeat every 2 seconds to enable the load balancer to verify server statuses. We maintain a circular array of servers and send heartbeats in sequence. If the status code is 200, indicating the server is online, no action is taken. However, if the status code is different, we check whether the server container has been stopped or removed. If stopped, we resume the server container; otherwise, we initiate a new server container. This approach ensures a fixed number of servers. In the worst-case scenario, the time required to bring a server back to life is estimated at 2*n seconds, assuming there are currently n live servers.
 
+## A-4
+
+The chosen hash functions for the demonstration, 
+H(i)      = i * i + 6
+phi(i, j) = i * i + j 
+
+along with the application of the linear probing technique, exhibited poorer performance compared to the previous ones. Server 1 experienced a higher load due to the inability of these hash functions to effectively distribute the loads across the servers.
+
+
+## Explaination of uneven distribution:
+We have carried out the experiment multiple times with the same parameter and every time we observed different distributions hence we cannot conclude anything based upon its randomized nature.
