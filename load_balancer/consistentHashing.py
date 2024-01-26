@@ -1,7 +1,9 @@
 import hashlib
 import math
 
+# class for consistent hashing algorithm
 class ConsistentHashing:
+    # initialize the class
     def __init__(self, num_servers, total_slots, num_virtual_servers):
         self.num_servers = num_servers
         self.total_slots = total_slots
@@ -19,11 +21,11 @@ class ConsistentHashing:
 
     def hash_function_request(self, request_id):
         return (request_id ** 2 + 2 * request_id + 17) % self.total_slots
-        #return (request_id ** 2 + 6) % self.total_slots
+        #return (request_id ** 2 + 6) % self.total_slots # new hash function
 
     def hash_function_server(self, server_id, virtual_server_id):
         return (server_id ** 2 + virtual_server_id ** 2 + 2 * virtual_server_id + 25) % self.total_slots
-        #return (server_id ** 2 + virtual_server_id) % self.total_slots
+        #return (server_id ** 2 + virtual_server_id) % self.total_slots # new hash function
     
     def add_server(self, server_id):
         for j in range(self.num_virtual_servers):
@@ -46,12 +48,14 @@ class ConsistentHashing:
             print(f"Server {server_id} does not exist")
             return
         
+        # Remove all virtual servers of the server_id
         for j in range(self.num_virtual_servers):
             virtual_server_id = f"{server_id}-{j}"
             slot = self.hash_function_server(server_id, j)
             
             # Remove the server from the hash map
             while True :
+                # because of linear probing, we need to check if the server_id is in the slot
                 if slot in self.servers.keys() and self.servers[slot] == server_id:
                     del self.servers[slot]
                     break
@@ -64,6 +68,7 @@ class ConsistentHashing:
             print("No servers exist")
             return None
 
+        # hash the request_id to get the slot
         slot = self.hash_function_request(request_id)
         sorted_slots = sorted(self.servers.keys())
         
@@ -75,6 +80,7 @@ class ConsistentHashing:
         # If no slot is found greater than or equal to the request's slot, return the first slot in the sorted list
         return self.servers[sorted_slots[0]]
 
+# test cases
 # # Example usage:
 # num_servers = 3
 # total_slots = 512
