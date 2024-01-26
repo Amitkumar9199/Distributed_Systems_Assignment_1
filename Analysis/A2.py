@@ -44,7 +44,8 @@ async def main():
         for i in range (2, 7):
 
             freq = {}
-
+            
+            # calculate the frequency of each server, send 10000 requests
             for j in range(10000):
                 async with aiohttp.ClientSession() as session:
                     response = await fetch(session, url + 'home')
