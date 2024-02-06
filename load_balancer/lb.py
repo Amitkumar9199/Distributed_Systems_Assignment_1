@@ -58,7 +58,7 @@ def add_servers():
         i = 0
         while(i < n):
             # Get server IDs for server
-            server_id = random.randint(0, 1000000)
+            server_id = random.randint(100000, 999999)
 
             # If server ID already exists , just continue
             if server_id in server_id_to_host.keys():
@@ -241,11 +241,11 @@ def redirect_request(path='home'):
     # try:
     #     data = request.get_json()
     #     if not data  or 'request_id' not in data.keys():
-    #         request_id = random.randint(100000, 1000000)
+    #         request_id = random.randint(100000, 999999)
     #     else:
     #         request_id = data['request_id']
     # except KeyError as err:
-    request_id = random.randint(100000, 1000000) # generate a random request id
+    request_id = random.randint(100000, 999999) # generate a random request id
 
     # Using the request id select the server and replace server_id and server name with corresponding values
     try:
